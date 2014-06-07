@@ -1,4 +1,4 @@
-function adjClose = calculateAdjustedClose(closeDates, closePrices, dividendDates, dividendPrices)
+function adjClose = calculate_adjusted_close(closeDates, closePrices, dividendDates, dividendPrices)
 % Applies the CRSP method for adjusting closing prices for dividends.
 % Each new dividend changes the adjusted close for all dates in the past,
 % so strictly speaking this only calculates the adjusted closing prices
@@ -14,7 +14,7 @@ function adjClose = calculateAdjustedClose(closeDates, closePrices, dividendDate
 % Ensure that closeDates is in descending order-- this is crucial to get
 % right due to the |cumprod| below and will not otherwise be caught:
 if ~all(diff(closeDates) < 0)
-    error('calculateAdjustedClose:CloseSorted', ...
+    error('calculate_adjusted_close:CloseSorted', ...
         'Closing prices/dates must be sorted in decreasing order')
 end
 

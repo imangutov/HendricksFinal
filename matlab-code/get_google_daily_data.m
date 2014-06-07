@@ -1,7 +1,7 @@
-function [data, dividends] = getGoogleDailyData(tickers, startDate, endDate, dateFormat)
+function [data, dividends] = get_google_daily_data(tickers, startDate, endDate, dateFormat)
 
 
-% GETGOOGLEDAILYDATA scrapes the Google Finance website for one or more
+% get_google_daily_data scrapes the Google Finance website for one or more
 % ticker symbols and returns OHLC, volume, adjusted close, and dividend
 % information for the date range specified.
 %
@@ -29,7 +29,7 @@ function [data, dividends] = getGoogleDailyData(tickers, startDate, endDate, dat
 %   required).
 %
 % EXAMPLE:
-% [data, dividends] = getGoogleDailyData({'NASDAQ:MSFT', 'EPA:ML'}, ...
+% [data, dividends] = get_google_daily_data({'NASDAQ:MSFT', 'EPA:ML'}, ...
 %   '01/01/2010', '01/01/2013', 'dd/mm/yyyy');
 
 %% 1. Input parsing
@@ -104,7 +104,7 @@ for iTicker = 1:length(tickers)
     % price info was returned.  Error and say which asset is invalid:
     if isempty(history)
         close(h)
-        error('getGoogleDailyData:invalidTicker', ...
+        error('get_google_daily_data:invalidTicker', ...
             ['No data returned for ticker ''' tickers{iTicker} '''. Is this a valid symbol?'])
     end
     
@@ -128,7 +128,7 @@ for iTicker = 1:length(tickers)
     % adjusts for splits), multiply them by the unadjusted closing prices,
     % and then round to the nearest cent.
     ds.AdjClose = ...
-        calculateAdjustedClose(ds.Date, ds.Close, div.Date, div.Amount);
+        calculate_adjusted_close(ds.Date, ds.Close, div.Date, div.Amount);
             
     ds = flipud(ds);
     

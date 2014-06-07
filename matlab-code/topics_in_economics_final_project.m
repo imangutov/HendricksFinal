@@ -1,4 +1,4 @@
-% Bertrand liechtenstein & Iliar Mangutov & Shanshan Ni,
+% Bertrand liechtenstein & Iliar Mangutov & Shanshan Ni & Sean Filipov
 % Topics in economics, Final Project
 
 data = load_data();
