@@ -10,34 +10,40 @@ factors_ndx = data.factors_ndx;
 assets = data.asset_classes;
 assets_inx = data.asset_classes_ndx;
 
-% 2.1 CAPM
-% OLS estimation 
-%for asset_index=2:size(data.testassets,2)
-%  ab = polyfit(data.factordata(:,data.excess_mkt_index),data.testassets(:,asset_index),1);
-%  b(asset_index-1) = ab(1);
-%  a(asset_index-1) = ab(2);
-%end
+asset_data_set = data.asset_data_set;
+factor_data_set = data.factor_data_set;
+predictor_indeces = [factors_ndx.consumer_price, ...
+                     factors_ndx.unemployment_rate_monthly_percent, ...
+                     factors_ndx.vix_monthly_change];
+predictor_indeces = predictor_indeces - 1; % adjustment for timestamp
+           
+           
+%[num_of_timestamps, num_of_predictors] = size(predictors); 
+coefficient_estimates = zeros(size(assets,2)-1,size(predictor_indeces,2));
 
-% 2.2 use three macro variables to explain risk premia
-predictors = [  factors(:,factors_ndx.consumer_price), ...
-                factors(:,factors_ndx.unemployment_rate_monthly_percent), ...
-                factors(:,factors_ndx.vix_monthly_change) ];
-            
-[num_of_timestamps, num_of_predictors] = size(predictors); 
-coefficient_estimates = zeros(size(assets,2)-1,3);
-
-% 1. Estimate B parameters (5 asset classes -> 6 parameters)
-for asset_index=2:size(assets,2)
-  linear_regression_model = LinearModel.fit(predictors,assets(:,asset_index));
-  coefficient_estimates(asset_index-1,:) = double(linear_regression_model.Coefficients(2:4,1))';
+lambdas = zeros(size(predictor_indeces,1));
+% Estimate individually each factor with every secutity
+% (lecture 9, slide 5)
+for factor_ndx = 1:size(predictor_indeces,1)
+    factor_data = factor_data_set{predictor_indeces(factor_ndx)};
+    coefficient_estimates = zeros(size(assets,2),3);
+    
+    asset_mean_returns = zeros(size(asset_data_set,2),1);
+    for asset_ndx=1:size(asset_data_set,2)
+        asset_data = asset_data_set{asset_ndx};
+        
+        common_timestamps = intersect(factor_data(:,1), asset_data(:,1));
+        f = get_intersect_array(common_timestamps, factor_data);
+        a = get_intersect_array(common_timestamps, asset_data);
+        asset_mean_returns(asset_ndx) = mean(a);
+        c = [f, a];
+        linear_regression_model = LinearModel.fit(f,a);
+        coefficient_estimates(asset_ndx,factor_ndx) = double(linear_regression_model.Coefficients(1,1))';
+    end
+    
+    lambdas(factor_ndx) = regress(asset_mean_returns',coefficient_estimates(1,:));
 end
 
-assets_excess_returns = assets;
-assets_excess_returns(:, 1) = [];
-assets_excess_mean_returns = mean(assets_excess_returns,1);
-
-% 2. Estimate factor premia
-lambdas = regress(assets_excess_mean_returns',coefficient_estimates);
 
 % 3. Compare the model implied risk premia with the mean return
 model_implied_risk_premia = coefficient_estimates*lambdas;

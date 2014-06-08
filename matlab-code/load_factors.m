@@ -2,7 +2,7 @@
 % Topics in economics, Final Project
 % TODO quaterly - 'gdp-percent-change-quarterly.xls' & 'corporate-profits-after-tax-quaterly-percent-change.xls'
 
-function [factors, indeces] = load_factors()
+function [factors, indeces, factor_data_set] = load_factors()
   factor_files ={ 'consumer-price-index-for-all-urban-consumers-percent-change-monthly.xls' ...
                   'sp500-divident-yield-per-month.xls' ...
                   'unemployment-rate-change-from-year-ago-percent.xls' ...
@@ -22,7 +22,7 @@ function [factors, indeces] = load_factors()
     factor_data_set{file_index} = factor_data;
     clear dates_list raw_data data_dates factor_data;
   end
-  clear file_index factor_files;
+  clear factor_files;
   
   factor_data = factor_data_set{1,1};
   timestamp_array = factor_data(:,1);
@@ -30,6 +30,13 @@ function [factors, indeces] = load_factors()
     factor_data = factor_data_set{1,factor_index};
     timestamp_array=intersect(timestamp_array,factor_data(:,1));
   end
+  
+  % added GDP
+  [GDB_data,~,raw_data] = xlsread('../data/factors/GDP.xls','A21:B289')
+  dates_list = datenum(raw_data(:,1));
+  data_dates = year(dates_list)*100+month(dates_list);
+  GDP = [data_dates, GDB_data];
+  factor_data_set{file_index+1} = GDP;
   
   %TODO - do not assume 6 factors, run in loop
   factors = horzcat(timestamp_array,...
@@ -47,4 +54,5 @@ function [factors, indeces] = load_factors()
   indeces.unemployment_rate_monthly_change_percent = 5;
   indeces.unemployment_rate_monthly_percent = 6;
   indeces.vix_monthly_change = 7;
+  indeces.GDP = 8;
 end
