@@ -1,30 +1,43 @@
 % Bertrand liechtenstein & Iliar Mangutov & Shanshan Ni & Sean Filipov
 % Topics in economics, Final Project
 
-data = load_data();
+clearvars
+from_mat_file = true;
+data = load_data(from_mat_file);
+
+factors = data.factors;
+factors_ndx = data.factors_ndx;
+assets = data.asset_classes;
+assets_inx = data.asset_classes_ndx;
 
 % 2.1 CAPM
 % OLS estimation 
-for asset_index=2:size(data.testassets,2)
-  ab = polyfit(data.factordata(:,data.excess_mkt_index),data.testassets(:,asset_index),1);
-  b(asset_index-1) = ab(1);
-  a(asset_index-1) = ab(2);
-end
+%for asset_index=2:size(data.testassets,2)
+%  ab = polyfit(data.factordata(:,data.excess_mkt_index),data.testassets(:,asset_index),1);
+%  b(asset_index-1) = ab(1);
+%  a(asset_index-1) = ab(2);
+%end
 
 % 2.2 use three macro variables to explain risk premia
-predictors = [data.factordata(:,data.recession_index) data.factordata(:,data.gdp_growth_index) data.factordata(:,data.corporate_profit_growth_index)];
-coefficient_estimates = zeros(size(data.testassets,2)-1,3);
-for asset_index=2:size(data.testassets,2)
-  linear_regression_model = LinearModel.fit(predictors,data.testassets(:,asset_index));
+predictors = [  factors(:,factors_ndx.consumer_price), ...
+                factors(:,factors_ndx.unemployment_rate_monthly_percent), ...
+                factors(:,factors_ndx.vix_monthly_change) ];
+            
+[num_of_timestamps, num_of_predictors] = size(predictors); 
+coefficient_estimates = zeros(size(assets,2)-1,3);
+
+for asset_index=2:size(assets,2)
+  linear_regression_model = LinearModel.fit(predictors,assets(:,asset_index));
   coefficient_estimates(asset_index-1,:) = double(linear_regression_model.Coefficients(2:4,1))';
 end
 
 
 % 2.1.a Calculate the unconditional risk premium implied by the CAPM for these assets
-unconditional_risk_premium = b*mean(data.factordata(:,data.excess_mkt_index));
-testassets_excess_returns = data.testassets;
-testassets_excess_returns(:, 1) = [];
-testassets_excess_mean_returns = mean(testassets_excess_returns,1);
+%unconditional_risk_premium = b*mean(data.factordata(:,data.excess_mkt_index));
+%testassets_excess_returns = data.testassets;
+%testassets_excess_returns(:, 1) = [];
+
+%testassets_excess_mean_returns = mean(testassets_excess_returns,1);
 
 % 2.2.a The model-implied risk premia
 lambdas = coefficient_estimates\testassets_excess_mean_returns(:);

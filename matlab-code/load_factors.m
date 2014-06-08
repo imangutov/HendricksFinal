@@ -2,7 +2,7 @@
 % Topics in economics, Final Project
 % TODO quaterly - 'gdp-percent-change-quarterly.xls' & 'corporate-profits-after-tax-quaterly-percent-change.xls'
 
-function factors = load_factors()
+function [factors, indeces] = load_factors()
   factor_files ={ 'consumer-price-index-for-all-urban-consumers-percent-change-monthly.xls' ...
                   'sp500-divident-yield-per-month.xls' ...
                   'unemployment-rate-change-from-year-ago-percent.xls' ...
@@ -10,11 +10,12 @@ function factors = load_factors()
                   'unemployment-rate-monthly-percent.xls' ...
                   'vix-monthly-change-percent.xls'};
   for file_index = 1:size(factor_files,2)
-    [factor_data,~,raw_data] = xlsread(factor_files{file_index});
+    file_name = strcat('..\data\factors\', factor_files{file_index});
+    [factor_data,~,raw_data] = xlsread(file_name);%factor_files{file_index});
     dates_list = datenum(raw_data(2:end,1));
     data_dates = year(dates_list)*100+month(dates_list);
     factor_data = [data_dates factor_data];
-    if strcmp('sp500-divident-yield-per-month.xls',factor_files{file_index})==1
+    if(~isempty(strfind(factor_files{file_index}, 'sp500-divident-yield-per-month.xls')))
       factor_data = grpstats(factor_data,factor_data(:,1)); % dividents are couple of times per month, average by months
     end
     factor_data = sortrows(factor_data,-1);  
@@ -39,4 +40,11 @@ function factors = load_factors()
                     get_intersect_array(timestamp_array,factor_data_set{1,5}),...
                     get_intersect_array(timestamp_array,factor_data_set{1,6}));
   factors = sortrows(factors,-1);
+  indeces.date = 1;
+  indeces.consumer_price = 2;
+  indeces.divident_yield = 3;
+  indeces.unemployment_rate_year_ago_chng = 4;
+  indeces.unemployment_rate_monthly_change_percent = 5;
+  indeces.unemployment_rate_monthly_percent = 6;
+  indeces.vix_monthly_change = 7;
 end

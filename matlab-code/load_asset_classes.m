@@ -1,6 +1,6 @@
 % Bertrand liechtenstein & Iliar Mangutov & Shanshan Ni & Sean Filipov
 % Topics in economics, Final Project
-function asset_classes = load_asset_classes()
+function [asset_classes, indeces] = load_asset_classes()
   files = {'bnd_vanguard_total_bond_market_etf_monthly.xls' ...
            'lsc_snp_commodity_trends_indicator_monthly.xls' ...
            'rwr_spdr_dow_jones_reit_etf_monthly.xls' ...
@@ -9,7 +9,8 @@ function asset_classes = load_asset_classes()
   close_price_index = 4;
            
   for file_index = 1:size(files,2)
-    [level_data,~,raw_data] = xlsread(files{file_index});
+    file_name = strcat('..\data\asset-and-asset-classes\', files{file_index});
+    [level_data,~,raw_data] = xlsread(file_name);
     dates_list = datenum(raw_data(2:end,1));
     data_dates = year(dates_list)*100+month(dates_list);
     asset_data = [data_dates level_data(:,close_price_index)];
@@ -34,8 +35,16 @@ function asset_classes = load_asset_classes()
   asset_classes = sortrows(asset_classes,-1);
 
   for asset_index = 2:size(asset_classes,2)
-    returns = (asset_classes(1:end-1,asset_index)-asset_classes(2:end,asset_index))./asset_classes(2:end,asset_index);
+    returns = 12.0 * (asset_classes(1:end-1,asset_index)-asset_classes(2:end,asset_index))./asset_classes(2:end,asset_index);
     asset_classes(1:end-1,asset_index) = returns;
   end
   asset_classes(end,:) = [];
+  
+  indeces.date = 1;
+  indeces.bnd_vanguard_total_bond_market_etf_monthly = 2;
+  indeces.lsc_snp_commodity_trends_indicator_monthly = 3;
+  indeces.rwr_spdr_dow_jones_reit_etf_monthly = 4;
+  indeces.shv_ishares_short_treasury_bond_monthly = 5;
+  indeces.spy_us_equities_spdr_snp_500_monthly = 6;
+
 end
