@@ -1,7 +1,6 @@
 % Bertrand liechtenstein & Iliar Mangutov & Shanshan Ni & Sean Filipov
 % Topics in economics, Final Project
 function data = load_data(from_mat_file)
-
     data_file_name = '../data/data.mat'; 
     if (from_mat_file)
         data = load(data_file_name);
