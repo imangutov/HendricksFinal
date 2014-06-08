@@ -33,4 +33,9 @@ function asset_classes = load_asset_classes()
                     get_intersect_array(timestamp_array,assets{1,5}));
   asset_classes = sortrows(asset_classes,-1);
 
+  for asset_index = 2:size(asset_classes,2)
+    returns = (asset_classes(1:end-1,asset_index)-asset_classes(2:end,asset_index))./asset_classes(2:end,asset_index);
+    asset_classes(1:end-1,asset_index) = returns;
+  end
+  asset_classes(end,:) = [];
 end
