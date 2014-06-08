@@ -6,9 +6,19 @@ function data = load_data(from_mat_file)
         data = load(data_file_name);
         data = data.data;
     else
-        [data.factors data.factors_ndx] = load_factors();
-        [data.asset_classes data.asset_classes_ndx] = load_asset_classes();
+        [data.factors data.factors_ndx data.factor_data_set] = load_factors();
+        [data.asset_classes data.asset_classes_ndx data.asset_data_set] = load_asset_classes();
         data.risk_free_rate = load_risk_free_rate();
+
+        for asset_class_ndx = 1:size(data.asset_data_set,2)
+            common_timestamps = intersect(data.asset_data_set{asset_class_ndx}(:,1),...
+                                          data.risk_free_rate(:,1));
+            risk_free_rate = get_intersect_array(common_timestamps, data.risk_free_rate);
+            asset_return   = get_intersect_array(common_timestamps, data.asset_data_set{asset_class_ndx});
+            asset_excess_return = asset_return - risk_free_rate;
+            data.asset_data_set{asset_class_ndx}(:,2) = asset_excess_return;
+        end
+        
         min_date = max([min(data.factors(:,1)), ...
                         min(data.asset_classes(:,1)) ...
                         min(data.risk_free_rate(:,1)) ]);
@@ -21,10 +31,6 @@ function data = load_data(from_mat_file)
         data.asset_classes(data.asset_classes(:,1) > max_date, :) = [];
         data.risk_free_rate(data.risk_free_rate(:,1) < min_date, :) = [];
         data.risk_free_rate(data.risk_free_rate(:,1) > max_date, :) = [];
-        for asset_class_ndx = 2:size(data.asset_classes,2)
-            data.asset_classes(:,asset_class_ndx) = ...
-                data.asset_classes(:,asset_class_ndx) - data.risk_free_rate(:,2);
-        end
         
         save(data_file_name, 'data');
     end

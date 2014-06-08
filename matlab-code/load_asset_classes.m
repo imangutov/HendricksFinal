@@ -1,6 +1,6 @@
 % Bertrand liechtenstein & Iliar Mangutov & Shanshan Ni & Sean Filipov
 % Topics in economics, Final Project
-function [asset_classes, indeces] = load_asset_classes()
+function [asset_classes, indeces, asset_data_set] = load_asset_classes()
   files = {'bnd_vanguard_total_bond_market_etf_monthly.xls' ...
            'lsc_snp_commodity_trends_indicator_monthly.xls' ...
            'rwr_spdr_dow_jones_reit_etf_monthly.xls' ...
@@ -18,6 +18,16 @@ function [asset_classes, indeces] = load_asset_classes()
   end
   clear file_index raw_data level_data dates_list data_dates close_price_index files asset_data;
 
+  % get intersect with the risk free rate.
+  for asset_index = 1:size(assets,2)
+    asset_data = assets{1,asset_index};
+    returns = 12.0 * (asset_data(1:end-1,2)-asset_data(2:end,2))./asset_data(2:end,2);
+    assets{1,asset_index}(1:end-1,2) = returns;
+    assets{1,asset_index}(end,:) = [];
+  end
+  
+  asset_data_set = assets;
+  
   asset = assets{1,1};
   timestamp_array = asset(:,1);
   for ndx = 2:size(assets,2)
@@ -34,12 +44,6 @@ function [asset_classes, indeces] = load_asset_classes()
                     get_intersect_array(timestamp_array,assets{1,5}));
   asset_classes = sortrows(asset_classes,-1);
 
-  for asset_index = 2:size(asset_classes,2)
-    returns = 12.0 * (asset_classes(1:end-1,asset_index)-asset_classes(2:end,asset_index))./asset_classes(2:end,asset_index);
-    asset_classes(1:end-1,asset_index) = returns;
-  end
-  asset_classes(end,:) = [];
-  
   indeces.date = 1;
   indeces.bnd_vanguard_total_bond_market_etf_monthly = 2;
   indeces.lsc_snp_commodity_trends_indicator_monthly = 3;
