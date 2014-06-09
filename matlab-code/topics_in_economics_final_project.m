@@ -26,7 +26,6 @@ lambdas = zeros(size(predictor_indeces,1));
 % (lecture 9, slide 5)
 for factor_ndx = 1:size(predictor_indeces,1)
     factor_data = factor_data_set{predictor_indeces(factor_ndx)};
-    coefficient_estimates = zeros(size(assets,2),3);
     
     asset_mean_returns = zeros(size(asset_data_set,2),1);
     for asset_ndx=1:size(asset_data_set,2)
@@ -36,7 +35,6 @@ for factor_ndx = 1:size(predictor_indeces,1)
         f = get_intersect_array(common_timestamps, factor_data);
         a = get_intersect_array(common_timestamps, asset_data);
         asset_mean_returns(asset_ndx) = mean(a);
-        c = [f, a];
         linear_regression_model = LinearModel.fit(f,a);
         coefficient_estimates(asset_ndx,factor_ndx) = double(linear_regression_model.Coefficients(1,1))';
     end
