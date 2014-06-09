@@ -5,6 +5,7 @@ clearvars
 from_mat_file = true;
 data = load_data(from_mat_file);
 
+data2=data;
 factors = data.factors;
 factors_ndx = data.factors_ndx;
 assets = data.asset_classes;
