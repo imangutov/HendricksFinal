@@ -12,16 +12,16 @@ assets_inx = data.asset_classes_ndx;
 
 asset_data_set = data.asset_data_set;
 factor_data_set = data.factor_data_set;
-predictor_indeces = [factors_ndx.consumer_price, ...
+predictor_indices = [factors_ndx.consumer_price, ...
                      factors_ndx.unemployment_rate_monthly_percent, ...
                      factors_ndx.vix_monthly_change];
-predictor_indeces = predictor_indeces - 1; % adjustment for timestamp
+predictor_indices = predictor_indices - 1; % adjustment for timestamp
            
            
 %[num_of_timestamps, num_of_predictors] = size(predictors); 
-coefficient_estimates = zeros(size(assets,2)-1,size(predictor_indeces,2));
+coefficient_estimates = zeros(size(assets,2)-1,size(predictor_indices,2));
 
-lambdas = zeros(size(predictor_indeces,1));
+lambdas = zeros(size(predictor_indices,1));
 % Estimate individually each factor with every secutity
 % (lecture 9, slide 5)
 for factor_ndx = 1:size(predictor_indeces,1)
