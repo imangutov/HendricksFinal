@@ -32,7 +32,7 @@ function [factors, indices, factor_data_set] = load_factors()
   end
   
   % added GDP
-  [GDB_data,~,raw_data] = xlsread('../data/factors/GDP.xls','A21:B289')
+  [GDB_data,~,raw_data] = xlsread('../data/factors/GDP.xls','A2:B270');
   dates_list = datenum(raw_data(:,1));
   data_dates = year(dates_list)*100+month(dates_list);
   GDP = [data_dates, GDB_data];

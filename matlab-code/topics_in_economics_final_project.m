@@ -12,8 +12,8 @@ assets_inx = data.asset_classes_ndx;
 
 asset_data_set = data.asset_data_set;
 factor_data_set = data.factor_data_set;
-predictor_indices = [factors_ndx.consumer_price, ...
-                     factors_ndx.unemployment_rate_monthly_percent, ...
+predictor_indices = [factors_ndx.consumer_price; ...
+                     factors_ndx.unemployment_rate_monthly_percent; ...
                      factors_ndx.vix_monthly_change];
 predictor_indices = predictor_indices - 1; % adjustment for timestamp
            
@@ -21,11 +21,11 @@ predictor_indices = predictor_indices - 1; % adjustment for timestamp
 %[num_of_timestamps, num_of_predictors] = size(predictors); 
 coefficient_estimates = zeros(size(assets,2)-1,size(predictor_indices,2));
 
-lambdas = zeros(size(predictor_indices,1));
+lambdas = zeros(size(predictor_indices,1),1);
 % Estimate individually each factor with every secutity
 % (lecture 9, slide 5)
-for factor_ndx = 1:size(predictor_indeces,1)
-    factor_data = factor_data_set{predictor_indeces(factor_ndx)};
+for factor_ndx = 1:size(predictor_indices,1)
+    factor_data = factor_data_set{predictor_indices(factor_ndx,1)};
     
     asset_mean_returns = zeros(size(asset_data_set,2),1);
     for asset_ndx=1:size(asset_data_set,2)
@@ -39,7 +39,7 @@ for factor_ndx = 1:size(predictor_indeces,1)
         coefficient_estimates(asset_ndx,factor_ndx) = double(linear_regression_model.Coefficients(1,1))';
     end
     
-    lambdas(factor_ndx) = regress(asset_mean_returns',coefficient_estimates(1,:));
+    lambdas(factor_ndx) = regress(asset_mean_returns,coefficient_estimates);
 end
 
 
