@@ -2,7 +2,7 @@
 % Topics in economics, Final Project
 % TODO quaterly - 'gdp-percent-change-quarterly.xls' & 'corporate-profits-after-tax-quaterly-percent-change.xls'
 
-function [factors, indeces, factor_data_set] = load_factors()
+function [factors, indices, factor_data_set] = load_factors()
   factor_files ={ 'consumer-price-index-for-all-urban-consumers-percent-change-monthly.xls' ...
                   'sp500-divident-yield-per-month.xls' ...
                   'unemployment-rate-change-from-year-ago-percent.xls' ...
@@ -47,12 +47,12 @@ function [factors, indeces, factor_data_set] = load_factors()
                     get_intersect_array(timestamp_array,factor_data_set{1,5}),...
                     get_intersect_array(timestamp_array,factor_data_set{1,6}));
   factors = sortrows(factors,-1);
-  indeces.date = 1;
-  indeces.consumer_price = 2;
-  indeces.divident_yield = 3;
-  indeces.unemployment_rate_year_ago_chng = 4;
-  indeces.unemployment_rate_monthly_change_percent = 5;
-  indeces.unemployment_rate_monthly_percent = 6;
-  indeces.vix_monthly_change = 7;
-  indeces.GDP = 8;
+  indices.date = 1;
+  indices.consumer_price = 2;
+  indices.divident_yield = 3;
+  indices.unemployment_rate_year_ago_chng = 4;
+  indices.unemployment_rate_monthly_change_percent = 5;
+  indices.unemployment_rate_monthly_percent = 6;
+  indices.vix_monthly_change = 7;
+  indices.GDP = 8;
 end
