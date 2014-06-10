@@ -1,7 +1,7 @@
 % Bertrand liechtenstein & Iliar Mangutov & Shanshan Ni & Sean Filipov
 % Topics in economics, Final Project
-function [all_etfs, indices, etf_data_set] = load_etf()
-  etf_directory=''..\data\asset-and-asset-classes\portfolio-etfs\';
+function [all_etfs, indices, etf_data_set] = load_etf(begining_index)
+  etf_directory='..\data\asset-and-asset-classes\portfolio-etfs\';
   files = {'etf_bond_agg_ishares_core_us_aggregate_bond_monthly.xls' ...
            'etf_bond_bnd_vanguard_total_bond_market_etf_monthly.xls' ...
            'etf_bond_bsv_vanguard_short_term_bond_monthly.xls' ...
@@ -94,34 +94,34 @@ function [all_etfs, indices, etf_data_set] = load_etf()
   all_etfs = sortrows(all_etfs,-1);
 
   indices.date = 1;
-  indices.etf_bond_agg_ishares_core_us_aggregate_bond_monthly = 2;
-  indices.etf_bond_bnd_vanguard_total_bond_market_etf_monthly = 3;
-  indices.etf_bond_bsv_vanguard_short_term_bond_monthly = 4;
-  indices.etf_bond_mbb_ishares_mbs_monthly = 5;
-  indices.etf_bond_tip_ishares_tips_bond_monthly = 6;
-  indices.etf_don_wisdomtree_midcap_dividend_monthly = 7;
-  indices.etf_eem_ishares_msci_emerging_markets_monthly = 8;
-  indices.etf_ewj_ishares_msci_japan_monthly = 9;
-  indices.etf_fxi_ishares_china_large_cap_monthly = 10;
-  indices.etf_iwm_ishares_russell_2000_monthly = 11;
-  indices.etf_pjp_powershares_dynamic_pharmaceuticals_monthly = 12;
-  indices.etf_rom_proshares_ultra_technology_monthly = 13;
-  indices.etf_rwj_revenueshares_small_cap_monthly = 14;
-  indices.etf_rxl_proshares_ultra_health_care_monthly = 15;
-  indices.etf_slv_ishares_silver_trust_monthly = 16;
-  indices.etf_ucc_proshares_ultra_consumer_services_monthly = 17;
-  indices.etf_uge_proshares_ultra_consumer_goods_monthly = 18;
-  indices.etf_ung_united_states_natural_gas_monthly = 19;
-  indices.etf_upw_proshares_ultra_utilities_monthly = 20;
-  indices.etf_ure_proshares_ultra_real_estate_monthly = 21;
-  indices.etf_uso_united_states_oil_monthly = 22;
-  indices.etf_uxi_proshares_ultra_industrials_monthly = 23;
-  indices.etf_uyg_proshares_ultra_financials_monthly = 24;
-  indices.etf_uym_proshares_ultra_basic_materials_monthly = 25;
-  indices.etf_vbk_vanguard_small_cap_growth_monthly = 26;
-  indices.etf_vwo_vanguard_emerging_markets_stock_idx_monthly = 27;
-  indices.etf_xle_energy_select_sector_spdr_monthly = 28;
-  indices.etf_xlf_financial_select_sector_spdr_monthly = 29;
-  indices.etf_xli_industrial_select_sector_spdr_monthly = 30;  
+  indices.etf_bond_agg_ishares_core_us_aggregate_bond_monthly = 2 + begining_index;
+  indices.etf_bond_bnd_vanguard_total_bond_market_etf_monthly = 3 + begining_index;
+  indices.etf_bond_bsv_vanguard_short_term_bond_monthly = 4 + begining_index;
+  indices.etf_bond_mbb_ishares_mbs_monthly = 5 + begining_index;
+  indices.etf_bond_tip_ishares_tips_bond_monthly = 6 + begining_index;
+  indices.etf_don_wisdomtree_midcap_dividend_monthly = 7 + begining_index;
+  indices.etf_eem_ishares_msci_emerging_markets_monthly = 8 + begining_index;
+  indices.etf_ewj_ishares_msci_japan_monthly = 9 + begining_index;
+  indices.etf_fxi_ishares_china_large_cap_monthly = 10 + begining_index;
+  indices.etf_iwm_ishares_russell_2000_monthly = 11 + begining_index;
+  indices.etf_pjp_powershares_dynamic_pharmaceuticals_monthly = 12 + begining_index;
+  indices.etf_rom_proshares_ultra_technology_monthly = 13 + begining_index;
+  indices.etf_rwj_revenueshares_small_cap_monthly = 14 + begining_index;
+  indices.etf_rxl_proshares_ultra_health_care_monthly = 15 + begining_index;
+  indices.etf_slv_ishares_silver_trust_monthly = 16 + begining_index;
+  indices.etf_ucc_proshares_ultra_consumer_services_monthly = 17 + begining_index;
+  indices.etf_uge_proshares_ultra_consumer_goods_monthly = 18 + begining_index;
+  indices.etf_ung_united_states_natural_gas_monthly = 19 + begining_index;
+  indices.etf_upw_proshares_ultra_utilities_monthly = 20 + begining_index;
+  indices.etf_ure_proshares_ultra_real_estate_monthly = 21 + begining_index;
+  indices.etf_uso_united_states_oil_monthly = 22 + begining_index;
+  indices.etf_uxi_proshares_ultra_industrials_monthly = 23 + begining_index;
+  indices.etf_uyg_proshares_ultra_financials_monthly = 24 + begining_index;
+  indices.etf_uym_proshares_ultra_basic_materials_monthly = 25 + begining_index;
+  indices.etf_vbk_vanguard_small_cap_growth_monthly = 26 + begining_index;
+  indices.etf_vwo_vanguard_emerging_markets_stock_idx_monthly = 27 + begining_index;
+  indices.etf_xle_energy_select_sector_spdr_monthly = 28 + begining_index;
+  indices.etf_xlf_financial_select_sector_spdr_monthly = 29 + begining_index;
+  indices.etf_xli_industrial_select_sector_spdr_monthly = 30 + begining_index;  
 
 end
