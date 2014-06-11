@@ -48,6 +48,10 @@ for factor_ndx = 1:size(predictor_indices,1)
 end
 
 
+for asset_ndx=1:size(asset_data_set,2)
+    asset_mean_returns(asset_ndx) = mean(asset_data_set{asset_ndx}(:,2));
+end
+
 % 3. Compare the model implied risk premia with the mean return
 model_implied_risk_premia = coefficient_estimates*lambdas;
 
@@ -60,7 +64,7 @@ title('Factor Model:Model-implied risk premium vs actual');
 fprintf('Pricing error absolute mean = %.5f\n',mean(abs(model_implied_risk_premia - asset_mean_returns)));
 
 y_hut = coefficient_estimates*lambdas;
-y = mean(assets(:,2:33),1)';
+y = mean(assets(:,2:32),1)';
 yresid = y_hut - y;
 SSresid = sum(yresid.^2);
 SStotal = (length(y)-1)*var(y);
