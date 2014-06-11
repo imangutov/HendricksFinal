@@ -6,7 +6,7 @@ clearvars
 % excel files to get data. 
 % otherwise it will just download "../data/data.mat" containing data
 % previously parsed...
-from_mat_file = false;
+from_mat_file = true;
 data = load_data(from_mat_file);
 
 factors = data.factors;
@@ -64,11 +64,42 @@ title('Factor Model:Model-implied risk premium vs actual');
 fprintf('Pricing error absolute mean = %.5f\n',mean(abs(model_implied_risk_premia - asset_mean_returns)));
 
 y_hut = coefficient_estimates*lambdas;
-y = mean(assets(:,2:32),1)';
+y = asset_mean_returns; %mean(assets(:,2:32),1)';
 yresid = y_hut - y;
 SSresid = sum(yresid.^2);
 SStotal = (length(y)-1)*var(y);
 R2_FACTOR2 = 1 - SSresid/SStotal;
+fprintf('R^2 mean for macro factor model = %.3f\n',R2_FACTOR2);
 
-fprintf('R^2 mean for CAPM = %.3f; R^2 mean for macro factor model = %.3f\n',mean(R2_CAPM),R2_FACTOR2);
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%  GMM
+gmm_estimates = zeros(size(assets,2)-1, size(predictor_indices,1));
+factors_no_date = factors;
+factors_no_date(:,1) = [];
+for asset_ndx=2:size(assets,2)
+    asset = assets(:,asset_ndx);
+    out = ols_gmm(asset, factors_no_date, 12);
+    gmm_estimates(asset_ndx-1,:) = out.b(2:5);
+end
+%lambdas(factor_ndx) = regress(asset_mean_returns,out.b(2:5));
+lambdas = gmm_estimates\asset_mean_returns(:);
+
+model_implied_risk_premia = gmm_estimates*lambdas;
+
+scatter(model_implied_risk_premia, asset_mean_returns,'MarkerFaceColor','blue');
+xlabel('Model-implied risk premium of asset');
+ylabel('Actual mean excess return of the asset');
+title('Factor Model:Model-implied risk premium vs actual');
+
+% 2.2.d Report the mean of these 25 absolute value regression residuals
+fprintf('Pricing error absolute mean = %.5f\n',mean(abs(model_implied_risk_premia - asset_mean_returns)));
+
+y_hut = gmm_estimates*lambdas;
+y = asset_mean_returns; %mean(assets(:,2:32),1)';
+yresid = y_hut - y;
+SSresid = sum(yresid.^2);
+SStotal = (length(y)-1)*var(y);
+R2_FACTOR2 = 1 - SSresid/SStotal;
+fprintf('R^2 mean for macro factor model = %.3f\n',R2_FACTOR2);
 
