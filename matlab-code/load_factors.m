@@ -27,6 +27,12 @@ function [factors, indices, factor_data_set] = load_factors()
   end
   clear factor_files;
   
+  GDB_value = factor_data_set{4}(:,2);
+  GDB_dates = factor_data_set{4}(:,1);
+  GDB_value = 12*(GDB_value(2:end)-GDB_value(1:end-1))./GDB_value(1:end-1);
+  GDP = [GDB_dates(2:end,1), GDB_value];
+  factor_data_set{4} = GDP;
+  
   factor_data = factor_data_set{1,1};
   timestamp_array = factor_data(:,1);
   for factor_index = 2:size(factor_data_set,2)
