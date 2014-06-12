@@ -19,7 +19,7 @@ factor_data_set = data.factor_data_set;
 predictor_indices = [factors_ndx.consumer_price; ...
                      factors_ndx.unemployment_rate_monthly_percent; ...
                      factors_ndx.vix_monthly_change;
-                     factors_ndx.GDP];
+                     factors_ndx.gdp];
 predictor_indices = predictor_indices - 1; % adjustment for timestamp
            
            

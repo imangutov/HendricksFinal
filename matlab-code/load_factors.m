@@ -1,20 +1,24 @@
 % Bertrand liechtenstein & Iliar Mangutov & Shanshan Ni & Sean Filipov
 % Topics in economics, Final Project
-% TODO quaterly - 'gdp-percent-change-quarterly.xls' & 'corporate-profits-after-tax-quaterly-percent-change.xls'
 
 function [factors, indices, factor_data_set] = load_factors()
+  factors_directory = '..\data\factors\';
   factor_files ={ 'consumer-price-index-for-all-urban-consumers-percent-change-monthly.xls' ... %                  'unemployment-rate-change-from-year-ago-percent.xls' ...     'unemployment-rate-monthly-change-percent.xls' ... % 
                   'unemployment-rate-monthly-percent.xls' ...
-                  'vix-monthly-change-percent.xls'};
-%                  'sp500-divident-yield-per-month.xls' ...
+                  'vix-monthly-change-percent.xls' ...
+                  'gdp.xls' ...
+                  'corporate-profits-after-tax-quaterly-percent-change.xls'};                  
   for file_index = 1:size(factor_files,2)
-    file_name = strcat('..\data\factors\', factor_files{file_index});
-    [factor_data,~,raw_data] = xlsread(file_name);%factor_files{file_index});
+    file_name = strcat(factors_directory, factor_files{file_index});
+    [factor_data,~,raw_data] = xlsread(file_name);
     dates_list = datenum(raw_data(2:end,1));
     data_dates = year(dates_list)*100+month(dates_list);
     factor_data = [data_dates factor_data];
     if(~isempty(strfind(factor_files{file_index}, 'sp500-divident-yield-per-month.xls')))
       factor_data = grpstats(factor_data,factor_data(:,1)); % dividents are couple of times per month, average by months
+    end
+    if strcmp(factor_files{file_index} ,'gdp.xls')==1 || strcmp(factor_files{file_index} ,'corporate-profits-after-tax-quaterly-percent-change.xls')==1
+      factor_data = interpolate_quaterly_to_monthly(factor_data);
     end
     factor_data = sortrows(factor_data,-1);  
     factor_data_set{file_index} = factor_data;
@@ -29,32 +33,18 @@ function [factors, indices, factor_data_set] = load_factors()
     timestamp_array=intersect(timestamp_array,factor_data(:,1));
   end
   
-  % added GDP
-  [GDB_data,~,raw_data] = xlsread('../data/factors/GDP.xls','A2:B270');
-  dates_list = datenum(raw_data(:,1));
-  data_dates = year(dates_list)*100+month(dates_list);
-  GDB_data = 4*(GDB_data(2:end)-GDB_data(1:end-1))./GDB_data(1:end-1);
-  data_dates=data_dates(2:end);
-  GDP = [data_dates, GDB_data];
-  GDP_monthly = interpolate_quaterly_to_monthly(GDP);
-  factor_data_set{file_index+1} = GDP_monthly;
-  timestamp_array=intersect(timestamp_array,GDP_monthly(:,1));
-  
-  %TODO - do not assume 6 factors, run in loop
+  %TODO - do not assume 5 factors, run in loop
   factors = horzcat(timestamp_array,...
                     get_intersect_array(timestamp_array,factor_data_set{1,1}),...
                     get_intersect_array(timestamp_array,factor_data_set{1,2}),...
                     get_intersect_array(timestamp_array,factor_data_set{1,3}),...
-                    get_intersect_array(timestamp_array,factor_data_set{1,4})); 
- %                    get_intersect_array(timestamp_array,factor_data_set{1,5}));
- %                   get_intersect_array(timestamp_array,factor_data_set{1,6}));
+                    get_intersect_array(timestamp_array,factor_data_set{1,4}),...
+                    get_intersect_array(timestamp_array,factor_data_set{1,5})); 
   factors = sortrows(factors,-1);
   indices.date = 1;
   indices.consumer_price = 2;
-%  indices.divident_yield = 3;
-%  indices.unemployment_rate_year_ago_chng = 3;
-%  indices.unemployment_rate_monthly_change_percent = 4;
   indices.unemployment_rate_monthly_percent = 3;
   indices.vix_monthly_change = 4;
-  indices.GDP = 5;
+  indices.gdp = 5;
+  indices.corporate_profits = 6;
 end
