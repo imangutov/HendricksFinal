@@ -3,9 +3,7 @@
 % TODO quaterly - 'gdp-percent-change-quarterly.xls' & 'corporate-profits-after-tax-quaterly-percent-change.xls'
 
 function [factors, indices, factor_data_set] = load_factors()
-  factor_files ={ 'consumer-price-index-for-all-urban-consumers-percent-change-monthly.xls' ...
-                  'unemployment-rate-change-from-year-ago-percent.xls' ...
-                  'unemployment-rate-monthly-change-percent.xls' ...
+  factor_files ={ 'consumer-price-index-for-all-urban-consumers-percent-change-monthly.xls' ... %                  'unemployment-rate-change-from-year-ago-percent.xls' ...     'unemployment-rate-monthly-change-percent.xls' ... % 
                   'unemployment-rate-monthly-percent.xls' ...
                   'vix-monthly-change-percent.xls'};
 %                  'sp500-divident-yield-per-month.xls' ...
@@ -38,23 +36,25 @@ function [factors, indices, factor_data_set] = load_factors()
   GDB_data = 4*(GDB_data(2:end)-GDB_data(1:end-1))./GDB_data(1:end-1);
   data_dates=data_dates(2:end);
   GDP = [data_dates, GDB_data];
-  factor_data_set{file_index+1} = GDP;
+  GDP_monthly = interpolate_quaterly_to_monthly(GDP);
+  factor_data_set{file_index+1} = GDP_monthly;
+  timestamp_array=intersect(timestamp_array,GDP_monthly(:,1));
   
   %TODO - do not assume 6 factors, run in loop
   factors = horzcat(timestamp_array,...
                     get_intersect_array(timestamp_array,factor_data_set{1,1}),...
                     get_intersect_array(timestamp_array,factor_data_set{1,2}),...
                     get_intersect_array(timestamp_array,factor_data_set{1,3}),...
-                    get_intersect_array(timestamp_array,factor_data_set{1,4}),...
-                    get_intersect_array(timestamp_array,factor_data_set{1,5}));
+                    get_intersect_array(timestamp_array,factor_data_set{1,4})); 
+ %                    get_intersect_array(timestamp_array,factor_data_set{1,5}));
  %                   get_intersect_array(timestamp_array,factor_data_set{1,6}));
   factors = sortrows(factors,-1);
   indices.date = 1;
   indices.consumer_price = 2;
 %  indices.divident_yield = 3;
-  indices.unemployment_rate_year_ago_chng = 3;
-  indices.unemployment_rate_monthly_change_percent = 4;
-  indices.unemployment_rate_monthly_percent = 5;
-  indices.vix_monthly_change = 6;
-  indices.GDP = 7;
+%  indices.unemployment_rate_year_ago_chng = 3;
+%  indices.unemployment_rate_monthly_change_percent = 4;
+  indices.unemployment_rate_monthly_percent = 3;
+  indices.vix_monthly_change = 4;
+  indices.GDP = 5;
 end
