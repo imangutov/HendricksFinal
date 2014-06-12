@@ -22,10 +22,9 @@ predictor_indices = [factors_ndx.consumer_price; ...
                      factors_ndx.gdp;
                      factors_ndx.corporate_profits;
                      factors_ndx.divident_yield];
-                     
+
 predictor_indices = predictor_indices - 1; % adjustment for timestamp
-           
-           
+
 %[num_of_timestamps, num_of_predictors] = size(predictors); 
 coefficient_estimates = zeros(size(assets,2)-1,size(predictor_indices,1));
 
