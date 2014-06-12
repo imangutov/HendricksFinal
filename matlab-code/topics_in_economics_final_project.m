@@ -18,15 +18,19 @@ asset_data_set = data.asset_data_set;
 factor_data_set = data.factor_data_set;
 predictor_indices = [factors_ndx.consumer_price; ...
                      factors_ndx.unemployment_rate_monthly_percent; ...
-                     factors_ndx.vix_monthly_change;
-                     factors_ndx.gdp];
+                     factors_ndx.vix_monthly_change;...
+                     factors_ndx.gdp;...
+                     factors_ndx.corporate_profits;...
+                     factors_ndx.divident_yield];
+                
+                 
 predictor_indices = predictor_indices - 1; % adjustment for timestamp
            
            
 %[num_of_timestamps, num_of_predictors] = size(predictors); 
 coefficient_estimates = zeros(size(assets,2)-1,size(predictor_indices,1));
 
-lambdas = zeros(size(predictor_indices,1),1);
+%lambdas = zeros(size(predictor_indices,1),1);
 % Estimate individually each factor with every secutity
 % (lecture 9, slide 5)
 %for factor_ndx = 1:size(predictor_indices,1)
@@ -80,7 +84,7 @@ factors_no_date(:,1) = [];
 for asset_ndx=2:size(assets,2)
     asset = assets(:,asset_ndx);
     out = ols_gmm(asset, factors_no_date, 12);
-    gmm_estimates(asset_ndx-1,:) = out.b(2:5);
+    gmm_estimates(asset_ndx-1,:) = out.b(2:7);
 end
 %lambdas(factor_ndx) = regress(asset_mean_returns,out.b(2:5));
 lambdas = gmm_estimates\asset_mean_returns(:);
