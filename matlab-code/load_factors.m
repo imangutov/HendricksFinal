@@ -7,7 +7,8 @@ function [factors, indices, factor_data_set] = load_factors()
                   'unemployment-rate-monthly-percent.xls' ...
                   'vix-monthly-change-percent.xls' ...
                   'gdp.xls' ...
-                  'corporate-profits-after-tax-quaterly-percent-change.xls'};                  
+                  'corporate-profits-after-tax-quaterly-percent-change.xls' ...
+                  'sp500-divident-yield-per-month.xls'};
   for file_index = 1:size(factor_files,2)
     file_name = strcat(factors_directory, factor_files{file_index});
     [factor_data,~,raw_data] = xlsread(file_name);
@@ -33,13 +34,14 @@ function [factors, indices, factor_data_set] = load_factors()
     timestamp_array=intersect(timestamp_array,factor_data(:,1));
   end
   
-  %TODO - do not assume 5 factors, run in loop
+  %TODO - do not assume 6 factors, run in loop
   factors = horzcat(timestamp_array,...
                     get_intersect_array(timestamp_array,factor_data_set{1,1}),...
                     get_intersect_array(timestamp_array,factor_data_set{1,2}),...
                     get_intersect_array(timestamp_array,factor_data_set{1,3}),...
                     get_intersect_array(timestamp_array,factor_data_set{1,4}),...
-                    get_intersect_array(timestamp_array,factor_data_set{1,5})); 
+                    get_intersect_array(timestamp_array,factor_data_set{1,5}),...
+                    get_intersect_array(timestamp_array,factor_data_set{1,6}));
   factors = sortrows(factors,-1);
   indices.date = 1;
   indices.consumer_price = 2;
@@ -47,4 +49,6 @@ function [factors, indices, factor_data_set] = load_factors()
   indices.vix_monthly_change = 4;
   indices.gdp = 5;
   indices.corporate_profits = 6;
+  indices.divident_yield = 7;
+
 end
