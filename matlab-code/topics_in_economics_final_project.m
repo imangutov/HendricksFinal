@@ -19,7 +19,10 @@ factor_data_set = data.factor_data_set;
 predictor_indices = [factors_ndx.consumer_price; ...
                      factors_ndx.unemployment_rate_monthly_percent; ...
                      factors_ndx.vix_monthly_change;
-                     factors_ndx.gdp];
+                     factors_ndx.gdp;
+                     factors_ndx.corporate_profits;
+                     factors_ndx.divident_yield];
+                     
 predictor_indices = predictor_indices - 1; % adjustment for timestamp
            
            
@@ -80,9 +83,9 @@ factors_no_date(:,1) = [];
 for asset_ndx=2:size(assets,2)
     asset = assets(:,asset_ndx);
     out = ols_gmm(asset, factors_no_date, 12);
-    gmm_estimates(asset_ndx-1,:) = out.b(2:5);
+    gmm_estimates(asset_ndx-1,:) = out.b(2:size(predictor_indices,1)+1);
 end
-%lambdas(factor_ndx) = regress(asset_mean_returns,out.b(2:5));
+%lambdas(factor_ndx) = regress(asset_mean_returns,out.b(2:size(predictor_indices,1)+1));
 lambdas = gmm_estimates\asset_mean_returns(:);
 
 model_implied_risk_premia = gmm_estimates*lambdas;
