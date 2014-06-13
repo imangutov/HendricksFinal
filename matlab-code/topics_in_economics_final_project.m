@@ -12,7 +12,6 @@ data = load_data(from_mat_file);
 factors = data.factors;
 factors_ndx = data.factors_ndx;
 assets = data.assets;
-%assets_inx = data.asset_classes_ndx;
 
 asset_data_set = data.asset_data_set;
 factor_data_set = data.factor_data_set;
@@ -25,7 +24,6 @@ predictor_indices = [factors_ndx.consumer_price; ...
 
 predictor_indices = predictor_indices - 1; % adjustment for timestamp
 
-%[num_of_timestamps, num_of_predictors] = size(predictors); 
 coefficient_estimates = zeros(size(assets,2)-1,size(predictor_indices,1));
 
 lambdas = zeros(size(predictor_indices,1),1);
@@ -55,15 +53,7 @@ for asset_ndx=1:size(asset_data_set,2)
     asset_mean_returns(asset_ndx) = mean(asset_data_set{asset_ndx}(:,2));
 end
 
-% 3. Compare the model implied risk premia with the mean return
-%model_implied_risk_premia = coefficient_estimates*lambdas;
-%
-%scatter(model_implied_risk_premia, asset_mean_returns,'MarkerFaceColor','blue');
-%xlabel('Model-implied risk premium of asset');
-%ylabel('Actual mean excess return of the asset');
-%title('Factor Model:Model-implied risk premium vs actual');
-
-% 2.2.d Report the mean of these 25 absolute value regression residuals
+% Report the mean of these 25 absolute value regression residuals
 %fprintf('Pricing error absolute mean = %.5f\n',mean(abs(model_implied_risk_premia - asset_mean_returns)));
 %
 %y_hut = coefficient_estimates*lambdas;
@@ -86,7 +76,7 @@ for asset_ndx=2:size(assets,2)
     out = ols_gmm(asset, factors_no_date, 12);
     gmm_estimates(asset_ndx-1,:) = out.b(2:size(predictor_indices,1)+1);
 end
-%lambdas(factor_ndx) = regress(asset_mean_returns,out.b(2:size(predictor_indices,1)+1));
+
 lambdas = gmm_estimates\asset_mean_returns(:);
 
 out1 = ols_gmm(asset_mean_returns', gmm_estimates, 12);
@@ -98,7 +88,7 @@ xlabel('Model-implied risk premium of asset');
 ylabel('Actual mean excess return of the asset');
 title('Factor Model:Model-implied risk premium vs actual');
 
-% 2.2.d Report the mean of these 25 absolute value regression residuals
+% Report the mean of these 25 absolute value regression residuals
 fprintf('Pricing error absolute mean = %.5f\n',mean(abs(model_implied_risk_premia - asset_mean_returns')));
 
 y_hut = gmm_estimates*lambdas;
@@ -120,6 +110,4 @@ for asset_ndx = 2:11
 end
 lambdas_for_alternated_mean_returns =  gmm_estimates\asset_mean_returns(:);
 model_implied_risk_premia = gmm_estimates*lambdas_for_alternated_mean_returns;
-
-
 
