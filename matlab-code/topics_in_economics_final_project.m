@@ -29,6 +29,7 @@ predictor_indices = predictor_indices - 1; % adjustment for timestamp
 coefficient_estimates = zeros(size(assets,2)-1,size(predictor_indices,1));
 
 lambdas = zeros(size(predictor_indices,1),1);
+
 % Estimate individually each factor with every secutity
 % (lecture 9, slide 5)
 %for factor_ndx = 1:size(predictor_indices,1)
@@ -76,6 +77,7 @@ end
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%  GMM
+asset_mean_returns = mean(assets(:,2:end)); % in assets first column is time
 gmm_estimates = zeros(size(assets,2)-1, size(predictor_indices,1));
 factors_no_date = factors;
 factors_no_date(:,1) = [];
@@ -86,6 +88,8 @@ for asset_ndx=2:size(assets,2)
 end
 %lambdas(factor_ndx) = regress(asset_mean_returns,out.b(2:size(predictor_indices,1)+1));
 lambdas = gmm_estimates\asset_mean_returns(:);
+
+out1 = ols_gmm(asset_mean_returns', gmm_estimates, 12);
 
 model_implied_risk_premia = gmm_estimates*lambdas;
 
@@ -103,5 +107,19 @@ yresid = y_hut - y;
 SSresid = sum(yresid.^2);
 SStotal = (length(y)-1)*var(y);
 R2_FACTOR2 = 1 - SSresid/SStotal;
-fprintf('R^2 mean for macro factor model = %.3f\n',R2_FACTOR2);
+fprintf('SSR = %.3f, SSD = %.3f, R^2 mean for macro factor model = %.3f\n',SSresid, SStotal,  R2_FACTOR2);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %% Sensetivety
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+for asset_ndx = 2:11
+    standard_error = std(assets(:,asset_ndx))/sqrt(length(assets(:,asset_ndx)));
+    asset_mean_returns(asset_ndx) = asset_mean_returns(asset_ndx) - ...
+        standard_error * (binornd(1,0.5)*2-1)/2;  % randomly add or extract S.E.
+end
+lambdas_for_alternated_mean_returns =  gmm_estimates\asset_mean_returns(:);
+model_implied_risk_premia = gmm_estimates*lambdas_for_alternated_mean_returns;
+
+
 
